@@ -1,0 +1,41 @@
+services:
+  nextcloud-db:
+    image: ${MARIADB_IMAGE:-mariadb:11}
+    container_name: nextcloud-db-rpa4all
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - nextcloud_db_data:/var/lib/mysql
+
+  nextcloud-redis:
+    image: ${REDIS_IMAGE:-redis:7-alpine}
+    container_name: nextcloud-redis-rpa4all
+    restart: unless-stopped
+
+  nextcloud:
+    image: ${NEXTCLOUD_IMAGE:-nextcloud:29-apache}
+    container_name: ${NEXTCLOUD_CONTAINER:-nextcloud-rpa4all}
+    restart: unless-stopped
+    ports:
+      - "${NEXTCLOUD_PORT:-8880}:80"
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+    environment:
+      MYSQL_HOST: nextcloud-db
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: nextcloud-redis
+      NEXTCLOUD_ADMIN_USER: ${NEXTCLOUD_ADMIN_USER}
+      NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
+    volumes:
+      - nextcloud_data:/var/www/html
+
+volumes:
+  nextcloud_data:
+  nextcloud_db_data:

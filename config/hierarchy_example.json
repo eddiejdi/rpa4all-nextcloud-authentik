@@ -1,0 +1,17 @@
+{
+  "manager_example": {
+    "username": "gestor.financeiro",
+    "attributes": {
+      "subordinates": [
+        "analista1.financeiro",
+        "analista2.financeiro"
+      ]
+    }
+  },
+  "subordinate_example": {
+    "username": "analista1.financeiro",
+    "attributes": {
+      "manager": "gestor.financeiro"
+    }
+  }
+}
