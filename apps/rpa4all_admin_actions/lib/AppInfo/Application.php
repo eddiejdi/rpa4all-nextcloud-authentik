@@ -6,9 +6,9 @@ namespace OCA\RPA4AllAdminActions\AppInfo;
 
 use OCA\RPA4AllAdminActions\Listener\LoadAdminScriptsListener;
 use OCP\AppFramework\App;
+use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
 use OCP\AppFramework\Bootstrap\IRegistrationContext;
-use OCP\AppFramework\Bootstrap\IRunner;
 use OCP\AppFramework\Http\Events\BeforeTemplateRenderedEvent;
 
 class Application extends App implements IBootstrap {
@@ -25,6 +25,6 @@ class Application extends App implements IBootstrap {
         );
     }
 
-    public function boot(IRunner $runner): void {
+    public function boot(IBootContext $context): void {
     }
 }
