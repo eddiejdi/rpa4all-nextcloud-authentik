@@ -1,0 +1,44 @@
+.rpa4all-actions {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.rpa4all-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 500;
+    transition: opacity 0.15s, background-color 0.15s;
+    white-space: nowrap;
+}
+
+.rpa4all-btn:hover {
+    opacity: 0.85;
+}
+
+.rpa4all-btn:disabled,
+.rpa4all-btn.rpa4all-loading {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rpa4all-btn-relogin {
+    background-color: #c0392b;
+}
+
+.rpa4all-btn-relogin:hover:not(:disabled) {
+    background-color: #a93226;
+}
+
+.rpa4all-btn-scan {
+    background-color: #0065a2;
+}
+
+.rpa4all-btn-scan:hover:not(:disabled) {
+    background-color: #005580;
+}

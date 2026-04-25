@@ -13,6 +13,9 @@ Fork operacional para RPA4All com 3 objetivos:
 - `scripts/bootstrap_nextcloud_oidc.sh`: instala apps e aplica OIDC/config no Nextcloud sem editar URL manualmente.
 - `scripts/sync_authentik_hierarchy_groups.py`: cria grupos de equipe no Authentik com base na hierarquia (gestor/subordinados).
 - `scripts/apply_nextcloud_team_folders.py`: aplica grupos e Group Folders no Nextcloud para restringir acesso por equipe.
+- `apps/rpa4all_admin_actions/`: app PHP que adiciona botões **Re-Login** e **Forçar Sync** no painel Admin > Usuários.
+- `scripts/relogin_user.py`: revoga tokens e sessões de um usuário, forçando re-login no Authentik e Nextcloud.
+- `scripts/force_sync_user.py`: força re-scan de arquivos no servidor e (opcionalmente) reseta o cliente desktop.
 - `scripts/generate_nextcloud_background.py`: gera SVG de fundo no mesmo padrão lógico do `www.rpa4all.com` (contexto Brasil + prompt dinâmico via LLM).
 - `scripts/apply_nextcloud_background.sh`: publica o SVG no theming do Nextcloud como background global.
 
@@ -66,7 +69,26 @@ set -a; source .env; set +a
 python3 scripts/apply_nextcloud_team_folders.py /tmp/rpa4all_teams.json
 ```
 
-7. Gerar e aplicar fundo no padrão do RPA4All.com:
+7. Forçar re-login de um usuário (revogar tokens e sessões):
+
+```bash
+set -a; source .env; set +a
+python3 scripts/relogin_user.py edenilson.paschoa@rpa4all.com --verbose
+```
+
+8. Forçar re-scan de arquivos e resetar cliente desktop:
+
+```bash
+set -a; source .env; set +a
+# apenas servidor:
+python3 scripts/force_sync_user.py edenilson
+
+# servidor + cliente local:
+python3 scripts/force_sync_user.py edenilson --reset-client \
+  --client-journal-path "~/RPA4AllFiles/.sync_nextcloud.rpa4all.com.db"
+```
+
+9. Gerar e aplicar fundo no padrão do RPA4All.com:
 
 ```bash
 set -a; source .env; set +a
@@ -78,7 +100,7 @@ python3 scripts/generate_nextcloud_background.py \
 NEXTCLOUD_CONTAINER=nextcloud bash scripts/apply_nextcloud_background.sh /tmp/rpa4all-nextcloud-bg.svg
 ```
 
-8. (Opcional) atualizar automaticamente 1x por dia:
+10. (Opcional) atualizar automaticamente 1x por dia:
 
 ```bash
 0 5 * * * cd /caminho/forks/rpa4all-nextcloud-authentik && \

@@ -57,6 +57,13 @@ echo "[4/4] Aplicando baseline de seguranca por grupo..."
 occ config:system:set sharing.manager_enforced_groups --value="1"
 occ config:system:set profile.enabled --value="true"
 
+echo "[5/5] Instalando app rpa4all_admin_actions..."
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+APP_SRC="${SCRIPT_DIR}/../apps/rpa4all_admin_actions"
+docker cp "${APP_SRC}" "${CONTAINER}:/var/www/html/apps/"
+docker exec "${CONTAINER}" chown -R www-data:www-data /var/www/html/apps/rpa4all_admin_actions
+occ app:enable rpa4all_admin_actions
+
 echo "Bootstrap concluido para ${CONTAINER}"
 echo "Nextcloud: ${NEXTCLOUD_URL}"
 echo "Authentik: ${AUTHENTIK_URL}"

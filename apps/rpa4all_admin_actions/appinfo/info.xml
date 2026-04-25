@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>rpa4all_admin_actions</id>
+    <name>RPA4All Admin Actions</name>
+    <summary>Re-Login and Force Sync buttons in Admin Users panel</summary>
+    <description>Adds Re-Login (revoke tokens/sessions) and Force Sync (files:scan) action buttons to the Nextcloud Admin Users management page.</description>
+    <version>1.0.0</version>
+    <licence>AGPL-3.0-or-later</licence>
+    <author mail="admin@rpa4all.com">RPA4All</author>
+    <namespace>RPA4AllAdminActions</namespace>
+    <category>admin</category>
+    <dependencies>
+        <php min-version="8.2"/>
+        <nextcloud min-version="29" max-version="33"/>
+    </dependencies>
+</info>

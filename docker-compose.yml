@@ -35,6 +35,7 @@ services:
       NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
     volumes:
       - nextcloud_data:/var/www/html
+      - ./scripts:/rpa4all_scripts:ro
 
 volumes:
   nextcloud_data:
