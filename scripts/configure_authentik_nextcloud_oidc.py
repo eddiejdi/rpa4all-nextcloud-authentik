@@ -73,32 +73,50 @@ def _scope_mapping_pks() -> list[str]:
     return [str(m["pk"]) for m in mappings]
 
 
-def ensure_provider_and_app() -> None:
-    flow_pk = _authorization_flow_pk()
-    mappings = _scope_mapping_pks()
-
-    redirect_uris = "\n".join(
+def build_redirect_uris(nextcloud_url: str) -> str:
+    """Retorna as URIs de redirect OIDC para o Nextcloud (oidc_login e user_oidc)."""
+    return "\n".join(
         [
-            f"{NEXTCLOUD_URL}/apps/oidc_login/oidc",
-            f"{NEXTCLOUD_URL}/apps/user_oidc/code",
+            f"{nextcloud_url.rstrip('/')}/apps/oidc_login/oidc",
+            f"{nextcloud_url.rstrip('/')}/apps/user_oidc/code",
         ]
     )
 
-    provider_payload = {
+
+def build_provider_payload(flow_pk: str, mappings: list[str], nextcloud_url: str) -> dict:
+    """Monta o payload do provider OAuth2 para a API do Authentik."""
+    if not CLIENT_SECRET:
+        raise SystemExit("AUTHENTIK_NEXTCLOUD_CLIENT_SECRET nao configurado.")
+    return {
         "name": "RPA4All Nextcloud Provider",
         "authorization_flow": flow_pk,
         "client_type": "confidential",
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
-        "redirect_uris": redirect_uris,
+        "redirect_uris": build_redirect_uris(nextcloud_url),
         "property_mappings": mappings,
         "sub_mode": "hashed_user_id",
         "include_claims_in_id_token": True,
         "issuer_mode": "per_provider",
     }
 
-    if not CLIENT_SECRET:
-        raise SystemExit("AUTHENTIK_NEXTCLOUD_CLIENT_SECRET nao configurado.")
+
+def build_app_payload(provider_pk: str, nextcloud_url: str) -> dict:
+    """Monta o payload da Application Nextcloud para a API do Authentik."""
+    return {
+        "name": "Nextcloud",
+        "slug": "nextcloud",
+        "provider": provider_pk,
+        "meta_launch_url": nextcloud_url,
+        "policy_engine_mode": "any",
+    }
+
+
+def ensure_provider_and_app() -> None:
+    flow_pk = _authorization_flow_pk()
+    mappings = _scope_mapping_pks()
+
+    provider_payload = build_provider_payload(flow_pk, mappings, NEXTCLOUD_URL)
 
     existing_provider = _first_result(
         f"/providers/oauth2/?search={urllib.parse.quote(CLIENT_ID)}"
@@ -113,13 +131,7 @@ def ensure_provider_and_app() -> None:
         provider_pk = created["pk"]
         print(f"Provider criado: {provider_pk}")
 
-    app_payload = {
-        "name": "Nextcloud",
-        "slug": "nextcloud",
-        "provider": provider_pk,
-        "meta_launch_url": NEXTCLOUD_URL,
-        "policy_engine_mode": "any",
-    }
+    app_payload = build_app_payload(str(provider_pk), NEXTCLOUD_URL)
 
     existing_app = _first_result("/core/applications/?search=nextcloud")
     if existing_app:
