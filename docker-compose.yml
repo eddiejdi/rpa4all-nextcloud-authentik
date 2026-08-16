@@ -35,6 +35,8 @@ services:
       NEXTCLOUD_ADMIN_PASSWORD: ${NEXTCLOUD_ADMIN_PASSWORD}
     volumes:
       - nextcloud_data:/var/www/html
+      - /mnt/storj8tb/nextcloud/external/LTO:/var/www/html/external/LTO
+      - /mnt/storj8tb/nextcloud/external/LTO-Tape:/var/www/html/external/LTO-Tape
       - ./scripts:/rpa4all_scripts:ro
 
 volumes:
